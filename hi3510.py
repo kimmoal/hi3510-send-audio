@@ -5,6 +5,7 @@ import time
 import socket
 import logging
 import datetime
+from sys import argv
 
 '''
 Header          BINARY_STREAM[4]    s
@@ -208,9 +209,13 @@ class Camera:
     time.sleep(1) #Wait for the audio to finish
 
 if __name__ == '__main__':
-  camera = Camera('192.168.1.32', 81)
-  success, dataConnectionId = camera.login('admin\x00\x00\x00i\x00m\x00a', '\x00\x00g\x00e\x00s\x00/\x00x\x004')
-  print 'success, dataConnectionId', success, dataConnectionId
+  if len(argv) == 4:
+    camera = Camera(argv[1], int(argv[2]))
+    success, dataConnectionId = camera.login('admin\x00\x00\x00i\x00m\x00a', '\x00\x00g\x00e\x00s\x00/\x00x\x004')
+    print 'success, dataConnectionId', success, dataConnectionId
   
-  handle = camera.send_wav(dataConnectionId, 'Turret_turret_active_8_8000.wav')
-  handle.join()
+    handle = camera.send_wav(dataConnectionId, argv[3])
+    handle.join()
+
+  else:
+    print 'usage: python %s IP PORT wav_file.wav' % argv[0]
